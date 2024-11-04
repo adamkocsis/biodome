@@ -1,0 +1,27 @@
+Package: biodome
+Type: Package
+Title: Tools for ecological analysis and simulations with icosahedral grids
+Version: 0.0.1
+Authors@R: c(
+	person(given="Adam T.", family="Kocsis", role=c("cre", "aut"),
+		   email="adam.t.kocsis@gmail.com", comment=c(ORCID="0000-0002-9028-665X")),
+	person(given="Deutsche Forschungsgemeinschaft", role="fnd"),
+	person(given="FAU GeoZentrum Nordbayern", role="fnd"))
+Maintainer: Adam T. Kocsis <adam.t.kocsis@gmail.com>
+Description: This needs a description.
+License: CC BY 4.0
+Date: 2024-08-16
+BugReports: https://github.com/adamkocsis/biodome
+Encoding: UTF-8
+LazyData: false
+Depends:
+    R (>= 4.0.0),
+	icosa
+Imports:
+	igraph
+NeedsCompilation: no
+RoxygenNote: 7.3.2
+Suggests:
+    tinytest,
+    knitr,
+    rmarkdown

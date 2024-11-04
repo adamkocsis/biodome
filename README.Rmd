@@ -1,0 +1,27 @@
+---
+output: rmarkdown::github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(badger)
+```
+
+#  via
+
+Virtual Arrays for efficient organisation of high-dimenional data.
+
+(Ádám T. Kocsis and Nussaïbah B. Raja)
+
+# Installing
+
+## Stable version
+
+The current version of the package is available from the CRAN servers:
+
+```R
+install.packages("via")
+```
+
+
