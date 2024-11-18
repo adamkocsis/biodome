@@ -8,20 +8,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(badger)
 ```
 
-#  via
+# biodome
 
-Virtual Arrays for efficient organisation of high-dimenional data.
+Tools for macroecological analysis and simulations with icosahedral grids
 
-(Ádám T. Kocsis and Nussaïbah B. Raja)
+(Ádám T. Kocsis )
 
-# Installing
 
-## Stable version
 
-The current version of the package is available from the CRAN servers:
-
-```R
-install.packages("via")
-```
 
 
