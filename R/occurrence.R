@@ -11,7 +11,7 @@
 #'
 #' # Single probabilitty, repeated s number of times
 #' repeated <- uniformOcc(p=0.3, s=100, k=40)
-uniformOcc <- function(p, s=NULL, g=NULL, k=NULL){
+uniformOcc <- function(p, s=NULL, g=NULL, k=NULL, nozero=TRUE){
 	# an icosa grid is given
 	if(is.null(k) & !is.null(g)){
 		k<- length(g)
@@ -44,6 +44,7 @@ uniformOcc <- function(p, s=NULL, g=NULL, k=NULL){
 
 		# defend s - has to be a positive integer)
 		if(s < 1 | (s%%1!=0) ) stop("The argument 's' has to be a positive integer.")
+		if(nozero) message("Zero occupancy is possible!")
 
 		# if this is lower then the probabiliy, that indicates occurrence
 		occurrenceMatrix <- randomMatrix <= p
@@ -53,9 +54,28 @@ uniformOcc <- function(p, s=NULL, g=NULL, k=NULL){
 		# create an empty matrix
 		occurrenceMatrix <- matrix(NA, ncol=s, nrow=k)
 
-		# for every taxon
-		for(i in 1:length(p)){
-			occurrenceMatrix[,i] <- randomMatrix[,i] <= p[i]
+		if(nozero){
+			# for every taxon
+			for(i in 1:length(p)){
+				# the presences of the taxon
+				thisTaxon <- randomMatrix[,i] <= p[i]
+
+				# store
+				occurrenceMatrix[,i] <- thisTaxon
+
+				# if the occupancy of the focal taxon is 0
+				if(!any(thisTaxon)){
+					# assign a single presence to the cell where likelyhood is the highest!
+					occurrenceMatrix[which.max(randomMatrix[,i]),i] <- TRUE
+				}
+
+			}
+		}else{
+			# for every taxon
+			for(i in 1:length(p)){
+				occurrenceMatrix[,i] <- randomMatrix[,i] <= p[i]
+			}
+
 		}
 
 	}

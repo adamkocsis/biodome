@@ -102,10 +102,18 @@ eulerRotation <- function(x, rotation, pole){
 ## temp <- PushFromPoint(sourcePoint, dists, otherPoint)
 ## points(temp)
 ## icosa::arcDist(sourcePoint, temp[1, ])
-pushFromPoint <- function(sourcePoint, dists, otherPoint){
+pushFromPoint <- function(sourcePoint, dists, otherPoint, output="polar"){
 		# transform both to Cartesian
-		sourceCart <- icosa::PolToCar(sourcePoint)
-		otherCart <- icosa::PolToCar(otherPoint)
+		if(ncol(sourcePoint)==2){
+			sourceCart <- icosa::PolToCar(sourcePoint)
+		}else{
+			sourceCart <- sourcePoint
+		}
+		if(ncol(otherPoint)==2){
+			otherCart <- icosa::PolToCar(otherPoint)
+		}else{
+			otherCart <- otherPoint
+		}
 
 		# b and a should be the same!
 		bLength <- sqrt(sum(sourceCart^2))
@@ -125,8 +133,11 @@ pushFromPoint <- function(sourcePoint, dists, otherPoint){
 		newZ <- (sin(alpha-theta)*sourceCart[,3]+sin(theta)*otherCart[,3])/sin(alpha)
 
 		# combine transform and return
-		newCart <- cbind(newX, newY, newZ)
-		return(icosa::CarToPol(newCart)[, 1:2])
+		res <- cbind(newX, newY, newZ)
+		if(output=="polar") res <- icosa::CarToPol(res)[, 1:2]
+
+		return(res)
+
 }
 
 

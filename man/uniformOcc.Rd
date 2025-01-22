@@ -4,7 +4,7 @@
 \alias{uniformOcc}
 \title{Uniform Bernoulli Model}
 \usage{
-uniformOcc(p, s = NULL, g = NULL, k = NULL)
+uniformOcc(p, s = NULL, g = NULL, k = NULL, nozero = TRUE)
 }
 \arguments{
 \item{p}{Either a single probability value, or a vector of probabilities.}

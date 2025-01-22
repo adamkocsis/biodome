@@ -211,3 +211,39 @@ rwdensity <- function(coarse, fine, sizes=NULL, steps=NULL, start=NULL, tabulate
 	return(res)
 
 }
+
+#' Random walk on a sphere
+#'
+#' @param x One pair of longitude and latitude coordinates in a matrix.
+#' @param step Distance covered in a single step (km)
+#' @param time The number of steps to take (integer)
+#' @param output The
+#' @return A matrix of coordinates.
+#' @examples
+#' randomWalk <- rwsphere(x=matrix(c(0,0), ncol=2), step=100, time=10)
+#' @export
+rwsphere <- function(x, step, time, output="polar"){
+
+	# a couple of random points
+	randomPoints <- icosa::rpsphere(time)
+
+	# the point
+	results <- matrix(NA, ncol=3, nrow=time+1)
+
+	# add the first point to the results
+	results[1,] <- icosa::PolToCar(x)
+
+	# for every time bin
+	for(i in 1:time){
+		# push the previous point in a random direction with step
+		results[i+1, ] <- pushFromPoint(
+			sourcePoint = results[i,,drop=FALSE],
+			dists=step,
+			otherPoint=randomPoints[i,,drop=FALSE],
+			output="cart")
+	}
+	if(output=="polar") {
+		results <- icosa::CarToPol(results)[,1:2]
+	}
+	return(results)
+}
