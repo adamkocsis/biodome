@@ -6,7 +6,7 @@
 \alias{biodome}
 \title{Biodome}
 \description{
-This is still the Beta version. Notes about found bugs and suggestions are more than welcome!
+This is still the pre-alpha version. Notes about found bugs and suggestions are more than welcome!
 }
 \seealso{
 Useful links:

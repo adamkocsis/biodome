@@ -1,7 +1,7 @@
 #' Biodome
 #'
 #'
-#' This is still the Beta version. Notes about found bugs and suggestions are more than welcome!
+#' This is still the pre-alpha version. Notes about found bugs and suggestions are more than welcome!
 #'
 #' @author Adam T. Kocsis (adam.t.kocsis@gmail.com)
 #' @docType package
