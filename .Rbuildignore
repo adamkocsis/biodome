@@ -10,3 +10,4 @@ vignettes/
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+_demo/
