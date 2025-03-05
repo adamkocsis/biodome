@@ -316,6 +316,75 @@ ranges_mgcd <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 
 }
 
+#' Calculate range with the centroid-distance method
+#'
+#' @param coordMat 2D numeric matrix with two columns: longitudes and latitudes.
+#' @param centroid The centroid given with a latitude-longitude coordinate pair.
+#' @param plot Logical, should the result be plotted? Will plot over active plot (as in \code{add=TRUE}).
+#' @param plot.args List arguments passed to the plotting function: \code{sf::plot}.
+#' @param q The quantile that will be returned as an estimate
+#' @return A list with an estimate an two indices the rows of the input matrix that represent the longest great circle (or one of them).
+#' @export
+#' @examples
+#' # 1. Canvas
+#' hex <- hexagrid(deg=5, sf=TRUE)
+#' plot(hex, reset=FALSE, xlim=c(-15, 40), ylim=c(25, 63))
+#'
+#' # 2. Records
+#' data(pinna)
+#'
+#' # just the coordinates
+#' coordMat <- SimpleCoordinates(pinna, long="decimallongitude", lat="decimallatitude")
+#' points(coordMat)
+#'
+#' # 3. calculate and visualize
+#' centDist <- ranges_centroid_distance(coordMat, plot=TRUE)
+#'
+#' lines(rbind(centDist$centroid,
+#' 		coordMat[which(centDist$estimate==centDist$distances)[1],]),
+#' 		col="blue", lwd=3)
+#
+ranges_centroid_distance <- function(coordMat, centroid=ranges_centroid_points(coordMat), plot=FALSE, plot.args=NULL, q=0.95){
+
+	# the centroid
+	centroidMat <- matrix(centroid, ncol=2, byrow=TRUE)
+
+	# calculate the distance matrix
+	dm <- as.numeric(icosa::arcdistmat(centroidMat, coordMat))
+	names(dm) <- rownames(coordMat)
+
+	# calculate the quantile
+	estimate <- quantile(dm, q)
+
+	# subset
+	result <- list(
+		estimate=estimate,
+		distances = dm,
+		centroid = centroid
+	)
+
+	# plotting
+	if(plot){
+
+		if(is.null(plot.args)) plot.args <- list(col="#88888866")
+		for(i in 1:nrow(coordMat)){
+			arguments <- c(list(x=rbind(centroid, coordMat[i, ])), plot.args)
+			do.call(icosa::arcs, arguments)
+		}
+
+		# find the closest
+		absDiff <- abs(dm-estimate)
+		index <- which(absDiff==min(absDiff))[1]
+		arcs(
+			x=rbind(centroid, coordMat[index, ]),
+			col="red", lwd=2
+		)
+
+	}
+
+	return(result)
+
+}
 ################################################################################
 # Latitudinal range
 ################################################################################
