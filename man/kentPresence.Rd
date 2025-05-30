@@ -7,15 +7,15 @@
 kentPresence(n, kappa, centers = NULL, beta = 0, drop = TRUE)
 }
 \arguments{
+\item{n}{Either a single integer or a vector with the number of points to be generated in one distribution.}
+
 \item{kappa}{A vector of kappa parameters of the Kent distribution. kappa = a indicates a uniform distribution, the higher kappa is, the concentrated the presences.}
 
-\item{centers}{The center points around which the points are to created. If \code{NULL}, then these will be randomized.}
+\item{centers}{The center points around which the points are to created (matrix). If \code{NULL}, then these will be randomized.}
 
 \item{beta}{The ovalness parameter of the Kent distribution}
 
 \item{drop}{If there is a single distribution to be created, should this ve a single matrix, rather than a list with one element?}
-
-\item{Numeric}{A vector with the number of points to be generated in one distribution}
 }
 \value{
 A list with with as many elements, as the length of n. Each element will be a matrix of point coordinates.
