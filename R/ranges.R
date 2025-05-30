@@ -572,3 +572,68 @@ occupancy_icosa <- function(x, icosa, plot=FALSE, plot.args=NULL){
 	return(res)
 
 }
+
+
+
+
+#' The gappiness of shape on an icosahedral grid
+#'
+#' @param x The list of faces that are part of the shape.
+#' @param icosa The icosahedral grid.
+#' @param ... Arguments passed to class-specific methods.
+#' @param exclude The list of faces that is to be excluded from the calculation
+#' @examples
+#' # create a grid
+#' hex <- hexagrid(2, sf=TRUE)
+#'
+#' # an example shape
+#' shape <- paste0("F", c(4, 5, 11, 13, 15, 21, 24, 26, 32, 33, 34, 35, 36))
+#'
+#' # the gappiness
+#' ranges_gappiness(shape, hex)
+#' @rdname ranges_gappiness
+#' @exportMethod ranges_gappiness
+setGeneric(
+	name="ranges_gappiness",
+	def=function(x,icosa,...){
+		standardGeneric("ranges_gappiness")
+	}
+)
+
+#' @rdname ranges_gappiness
+setMethod(
+	"ranges_gappiness",
+	signature=c(x="character", icosa="trigrid"),
+		definition=function(x, icosa, exclude=NULL){
+
+		# the holes of this patch
+		theHoles<- holes(x, icosa)
+
+		# gappiness is defined as number of hole cells divided by the holes and shape itself
+		gap <- (length(theHoles)-length(exclude))/(length(theHoles) + length(unique(x))-length(exclude))
+
+		# return both the metric and the way to plot it
+		theGap <- list(estimate=gap, holes=theHoles)
+
+		# return theappiness
+		return(theGap)
+	}
+)
+
+
+#' @rdname ranges_gappiness
+setMethod(
+	"ranges_gappiness",
+	signature=c(x="matrix", icosa="trigrid"),
+		definition=function(x, icosa, exclude=NULL){
+
+			# get the list of faces occupied
+			faceList <- locate(icosa, x)
+
+			# calculate the gappiness based on the faces
+			gap <- ranges_gappiness(faceList, icosa, exclude=exclude)
+
+			# return the gappiness
+			return(gap)
+	}
+)
