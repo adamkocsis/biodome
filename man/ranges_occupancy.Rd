@@ -9,7 +9,8 @@ ranges_occupancy(
   sf = NULL,
   icosa = NULL,
   plot = FALSE,
-  plot.args = NULL
+  plot.args = NULL,
+  alpha = 1
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ ranges_occupancy(
 \item{plot}{Logical, should the result be plotted? Will plot over active plot (as in \code{add=TRUE}).}
 
 \item{plot.args}{List arguments passed to the plotting function: \code{lines}.}
+
+\item{alpha}{Minimum occupancy with \code{alpha} proportion of occurrences.}
 }
 \value{
 A list with an estimate and the input for lines to show the MST.

@@ -518,6 +518,7 @@ ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 #' @param sf An sf object (not yet!).
 #' @param plot Logical, should the result be plotted? Will plot over active plot (as in \code{add=TRUE}).
 #' @param plot.args List arguments passed to the plotting function: \code{lines}.
+#' @param alpha Minimum occupancy with \code{alpha} proportion of occurrences.
 #' @return A list with an estimate and the input for lines to show the MST.
 #' @export
 #' @examples
@@ -536,11 +537,11 @@ ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 #' occ <- ranges_occupancy(coordMat, icosa=hex, plot=TRUE)
 #'
 #' # plot(hex, occ$cells, add=TRUE, col="green")
-ranges_occupancy <- function(coordMat, sf=NULL, icosa=NULL, plot=FALSE, plot.args=NULL){
+ranges_occupancy <- function(coordMat, sf=NULL, icosa=NULL, plot=FALSE, plot.args=NULL, alpha=1){
 
 
 	if(!is.null(icosa)){
-		result <- occupancy_icosa(coordMat, icosa, plot=plot, plot.args=plot.args)
+		result <- occupancy_icosa(coordMat, icosa, plot=plot, plot.args=plot.args, alpha=alpha)
 	}
 	if(!is.null(sf)){
 		stop("Not yet!")
@@ -551,22 +552,66 @@ ranges_occupancy <- function(coordMat, sf=NULL, icosa=NULL, plot=FALSE, plot.arg
 }
 
 
-occupancy_icosa <- function(x, icosa, plot=FALSE, plot.args=NULL){
+occupancy_icosa <- function(x, icosa, plot=FALSE, plot.args=NULL, alpha=1){
 
 	# the occupied cells by the points
 	cells <- icosa::locate(icosa, x)
 
-	# the occupied cell
-	occupCells <- unique(cells)
+	if(alpha!=1){
+		# tabulate the cells
+		tabulatedCells <- table(cells)
 
-	res <- list(
-		estimate=length(unique(occupCells)),
-		cells=occupCells
-	)
-	if(plot){
-		if(is.null(plot.args)) plot.args <- list(col="#55000033")
-		arguments <- c(list(x=icosa, y=cells, add=TRUE), plot.args)
-		do.call(icosa::plot, arguments)
+		# in decreasinng order
+		decreasingCells <- sort(tabulatedCells, decreasing=TRUE)
+
+		# cumulated to get the total
+		cumulated <- cumsum(decreasingCells)
+
+		# the number of occurrences to consider
+		nOccs <- nrow(x)*alpha
+
+		# which are below the cutoff
+		first <- max(which(cumulated < nOccs))
+
+		if(first!=length(cumulated)) first <- first+1
+
+		occupCells <- names(decreasingCells)[1:first]
+
+		# register these as well
+		freq <- data.frame(frequency=as.numeric(decreasingCells), keep=FALSE)
+		rownames(freq) <- names(decreasingCells)
+		freq$keep[1:first] <- TRUE
+
+		# the result object
+		res <- list(
+			estimate=length(unique(occupCells)),
+			cells=occupCells,
+			freq=freq
+		)
+
+
+		if(plot){
+			if(is.null(plot.args)) plot.args <- list(col="#55000033")
+			arguments <- c(list(x=icosa, y=res$cells, add=TRUE), plot.args)
+			do.call(icosa::plot, arguments)
+		}
+
+	}else{
+		# the occupied cell
+		occupCells <- unique(cells)
+
+		# the result object
+		res <- list(
+			estimate=length(unique(occupCells)),
+			cells=occupCells
+		)
+
+		if(plot){
+			if(is.null(plot.args)) plot.args <- list(col="#55000033")
+			arguments <- c(list(x=icosa, y=res$cells, add=TRUE), plot.args)
+			do.call(icosa::plot, arguments)
+		}
+
 	}
 
 	return(res)
