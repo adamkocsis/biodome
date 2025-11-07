@@ -2,7 +2,7 @@
 
 export(SimpleCoordinates)
 export(circleOcc)
-export(kentPresence)
+export(presence_kent)
 export(ranges_centroid_distance)
 export(ranges_centroid_points)
 export(ranges_chullplane)
