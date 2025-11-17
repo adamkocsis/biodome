@@ -134,82 +134,131 @@ rwfaces <- function(x, start=NULL, steps=NULL, size=NULL, history=FALSE){
 #' @return A character vector, face names of \code{x}. If \code{history} is set to \code{FALSE} it includes every face name only once, in the order of visitation. If \code{history=TRUE} face names can be duplicated following the history of the random walk.
 #' @export
 #' @examples
-#' coarse <- hexagrid(8)
+#
+#' coarse <- hexagrid(8, sf=TRUE)
+#' dens <- rwdensity(coarse, steps=c(200, 500))
+#' current <- dens[dens$shape==1, "count"]
+#' names(current) <- dens[dens$shape==1, "face"]
+#' plot(coarse, current)
+#'
 #' fine <- hexagrid(2)
 #' # random shape of 15 faces
 #' dist <- floor(rexp(15)*1500)
-#' rand <- rwdensity(coarse, fine, stesp=dist)
-rwdensity <- function(coarse, fine, sizes=NULL, steps=NULL, start=NULL, tabulated=TRUE){
+#' rand <- rwdensity(coarse, fine, steps=dist)
+rwdensity <- function(coarse, fine=NULL, sizes=NULL, steps=NULL, start=NULL, tabulated=TRUE){
 
-	# get the centers of the finer, basis grid
-	fineCenters <- icosa::centers(fine)
-	# locate centers, where they are on the coarse grid
-	dict <- icosa::locate(coarse, fineCenters)
-	if(any(is.na(dict))) stop("Exact alignment of 'fine' and 'coarse' is to be avoided.\nRotate the fine-scale grid!")
+	if(is.null(fine)){
 
-	# create dictionary
-	names(dict) <- rownames(fineCenters)
-
-	if(!is.null(sizes)){
-		stop("Not yet!")
-	}
-
-	if(!is.null(steps)){
-
-		# define containers
-		faceNames <- NULL
-		faceCount <- NULL
-		iteration <- NULL
-		fineface <- NULL
-
-
-		for(i in 1:length(steps)){
-
-			# generate fine resolution
-			one <- rwfaces(fine, steps=steps[i], start=start, history=TRUE)
-
-			# translate to other grid
-			visits <- dict[one]
-
-			if(tabulated){
-				# tabulate
-				tab<- table(visits)
-
-				# store
-				faceNames <- c(faceNames, names(tab))
-				faceCount <- c(faceCount, as.numeric(tab))
-				iteration <- c(iteration,rep(i, length(tab)))
-			}else{
-
-				faceNames <- c(faceNames, visits)
-				iteration <- c(iteration, rep(i, length(visits)))
-				fineface <- c(fineface,one)
-
-			}
-			cat(i, "\r")
-			flush.console()
+		if(!is.null(sizes)){
+			stop("Not yet!")
 		}
-	}
 
-	if(tabulated){
-		res <- data.frame(
-			face= faceNames,
-			count = faceCount,
-			shape = iteration
-		)
+		# if at least one steps argument is provided
+		if(!is.null(steps)){
+
+			# define containers
+			faceNames <- NULL
+			faceCount <- NULL
+			iteration <- NULL
+
+			for(i in 1:length(steps)){
+				one <- rwfaces(coarse, steps=steps[i], start=start, history=TRUE)
+				if(tabulated){
+					# tabulate
+					tab<- table(one)
+
+					# store
+					faceNames <- c(faceNames, names(tab))
+					faceCount <- c(faceCount, as.numeric(tab))
+					iteration <- c(iteration,rep(i, length(tab)))
+				}
+				cat(i, "\r")
+				flush.console()
+			}
+
+			# the returned object
+			res <- data.frame(
+				face= faceNames,
+				count = faceCount,
+				shape = iteration
+			)
+
+			return(res)
+
+		}
+
+	# both a coarse and a fine resolutino grid
 	}else{
-		res <- data.frame(
-			face= faceNames,
-			shape = iteration,
-			fine= fineface
-		)
+
+		# get the centers of the finer, basis grid
+		fineCenters <- icosa::centers(fine)
+		# locate centers, where they are on the coarse grid
+		dict <- icosa::locate(coarse, fineCenters)
+		if(any(is.na(dict))) stop("Exact alignment of 'fine' and 'coarse' is to be avoided.\nRotate the fine-scale grid!")
+
+		# create dictionary
+		names(dict) <- rownames(fineCenters)
+
+		if(!is.null(sizes)){
+			stop("Not yet!")
+		}
+
+		if(!is.null(steps)){
+
+			# define containers
+			faceNames <- NULL
+			faceCount <- NULL
+			iteration <- NULL
+			fineface <- NULL
 
 
+			for(i in 1:length(steps)){
+
+				# generate fine resolution
+				one <- rwfaces(fine, steps=steps[i], start=start, history=TRUE)
+
+				# translate to other grid
+				visits <- dict[one]
+
+				if(tabulated){
+					# tabulate
+					tab<- table(visits)
+
+					# store
+					faceNames <- c(faceNames, names(tab))
+					faceCount <- c(faceCount, as.numeric(tab))
+					iteration <- c(iteration,rep(i, length(tab)))
+				}else{
+
+					faceNames <- c(faceNames, visits)
+					iteration <- c(iteration, rep(i, length(visits)))
+					fineface <- c(fineface,one)
+
+				}
+				cat(i, "\r")
+				flush.console()
+			}
+		}
+
+		if(tabulated){
+			res <- data.frame(
+				face= faceNames,
+				count = faceCount,
+				shape = iteration
+			)
+		}else{
+			res <- data.frame(
+				face= faceNames,
+				shape = iteration,
+				fine= fineface
+			)
+
+
+		}
+
+
+		return(res)
 	}
-
-
-	return(res)
-
 }
 
 #' Random walk on a sphere

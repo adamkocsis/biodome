@@ -1,10 +1,15 @@
 # Change log of the R package 'biodome'
 
-# biodome 0.2.0-1 - 2025-11-07
+# biodome 0.2.0-2 - 2025-11-07
+
+## Added 
+
+- The `presences` main function.
+- The `kent_presences_icosa` function.
 
 ## Changed
 
-- renamed the `kentPresence` function to `presence_kent` and changed the `drop` argument to `listout`
+- Renamed the `kentPresence` function to `presences_kent` and changed the `drop` argument to `listout`
 
 # biodome 0.1.0 - 2025-06-25
 
