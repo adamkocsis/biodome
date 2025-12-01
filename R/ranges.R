@@ -316,7 +316,7 @@ ranges_mgcd <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 
 }
 
-#' Calculate range with the centroid-distance method
+#' Calculate range with the centroid-radius method
 #'
 #' @param coordMat 2D numeric matrix with two columns: longitudes and latitudes.
 #' @param centroid The centroid given with a latitude-longitude coordinate pair.
@@ -338,13 +338,13 @@ ranges_mgcd <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 #' points(coordMat)
 #'
 #' # 3. calculate and visualize
-#' centDist <- ranges_centroid_distance(coordMat, plot=TRUE)
+#' centDist <- ranges_centroid_radius(coordMat, plot=TRUE)
 #'
 #' lines(rbind(centDist$centroid,
 #' 		coordMat[which(centDist$estimate==centDist$distances)[1],]),
 #' 		col="blue", lwd=3)
 #
-ranges_centroid_distance <- function(coordMat, centroid=ranges_centroid_points(coordMat), plot=FALSE, plot.args=NULL, q=0.95){
+ranges_centroid_radius <- function(coordMat, centroid=ranges_centroid_points(coordMat), plot=FALSE, plot.args=NULL, q=0.95){
 
 	# the centroid
 	centroidMat <- matrix(centroid, ncol=2, byrow=TRUE)
@@ -461,6 +461,8 @@ ranges_latrange <- function(coordMat, plot=FALSE, plot.args=NULL){
 #' # lines(mst$show)
 ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 	if(!requireNamespace("vegan", quietly=TRUE)) stop("This function requires the 'vegan' extension package. ")
+
+	if(is.null(colnames(coordMat))) colnames(coordMat) <- c("long","lat")
 
 	# get rid of redundant entries
 	coordMat <- unique(coordMat)

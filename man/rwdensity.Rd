@@ -6,7 +6,7 @@
 \usage{
 rwdensity(
   coarse,
-  fine,
+  fine = NULL,
   sizes = NULL,
   steps = NULL,
   start = NULL,
@@ -31,9 +31,14 @@ A character vector, face names of \code{x}. If \code{history} is set to \code{FA
 Random density fields defined by random walks
 }
 \examples{
-coarse <- hexagrid(8)
+coarse <- hexagrid(8, sf=TRUE)
+dens <- rwdensity(coarse, steps=c(200, 500))
+current <- dens[dens$shape==1, "count"]
+names(current) <- dens[dens$shape==1, "face"]
+plot(coarse, current)
+
 fine <- hexagrid(2)
 # random shape of 15 faces
 dist <- floor(rexp(15)*1500)
-rand <- rwdensity(coarse, fine, stesp=dist)
+rand <- rwdensity(coarse, fine, steps=dist)
 }
