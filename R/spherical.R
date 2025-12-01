@@ -19,10 +19,14 @@ CoordFromDistAzimuth <- function(coords, azimuth, distance, radius=6371){
 	# should give  33.2989617271686
 	newlat <- asin(sin(lat*pi/180)*cos(distance/radius)+cos(lat*pi/180)*sin(distance/radius)*cos(azimuth*pi/180))*180/pi
 
+	# wrong formula!!
 	# shoudl give  -82.1798382123285
-	newlong <- (long*pi/180+atan2(
-		sin(azimuth*pi/180)*sin(distance/radius)*cos(newlat*pi/180),
-		cos(distance/radius)-sin(newlat*pi/180)*sin(newlat*pi/180)))*180/pi
+	## newlong <- (long*pi/180+atan2(
+	## 	sin(azimuth*pi/180)*sin(distance/radius)*cos(newlat*pi/180),
+	## 	cos(distance/radius)-sin(newlat*pi/180)*sin(newlat*pi/180)))*180/pi
+
+	dlong <- atan2(sin(azimuth*pi/180)*sin(distance/radius)*cos(lat*pi/180),cos(distance/radius)-sin(lat*pi/180)*sin(newlat*pi/180))
+	newlong <- ((long*pi/180-dlong + pi)%%(2*pi) - pi) /pi *180
 
 	return(cbind(long=newlong, lat=newlat))
 }
