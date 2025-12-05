@@ -573,10 +573,18 @@ occupancy_icosa <- function(x, icosa, plot=FALSE, plot.args=NULL, alpha=1){
 		nOccs <- nrow(x)*alpha
 
 		# which are below the cutoff
-		first <- max(which(cumulated < nOccs))[1]
+		below <- which(cumulated < nOccs)
 
-		if(first!=length(cumulated)) first <- first+1
+		# if there is at least something that needs to be omitted
+		if(length(below)>0)	{
+			first <- max(below)[1]
 
+			if(first!=length(cumulated)) first <- first+1
+
+		# otherwise
+		}else{
+			first <- length(decreasingCells)
+		}
 		occupCells <- names(decreasingCells)[1:first]
 
 		# register these as well
