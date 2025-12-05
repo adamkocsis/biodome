@@ -573,7 +573,7 @@ occupancy_icosa <- function(x, icosa, plot=FALSE, plot.args=NULL, alpha=1){
 		nOccs <- nrow(x)*alpha
 
 		# which are below the cutoff
-		first <- max(which(cumulated < nOccs))
+		first <- max(which(cumulated < nOccs))[1]
 
 		if(first!=length(cumulated)) first <- first+1
 
