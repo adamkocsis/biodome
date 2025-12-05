@@ -1,7 +1,7 @@
 Package: biodome
 Type: Package
 Title: Tools for macroecological analysis and simulations with icosahedral grids
-Version: 0.2.0-4
+Version: 0.2.0-5
 Authors@R: c(
 	person(given="Adam T.", family="Kocsis", role=c("cre", "aut"),
 		   email="adam.t.kocsis@gmail.com", comment=c(ORCID="0000-0002-9028-665X")),
@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Adam T. Kocsis <adam.t.kocsis@gmail.com>
 Description: Lots of cool tools.
 License: CC BY 4.0
-Date: 2025-12-01
+Date: 2025-12-05
 BugReports: https://github.com/adamkocsis/biodome
 Encoding: UTF-8
 LazyData: false
