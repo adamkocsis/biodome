@@ -380,6 +380,10 @@ ranges_centroid_radius <- function(coordMat, centroid=ranges_centroid_points(coo
 			col="red", lwd=2
 		)
 
+		# visualize this as a small circle -# dependent on future icosa addition!!
+		small<- smallcircles(x=centroidMat, r=estimate)
+		arcs(small, col="gray", lty=2, lwd=2)
+
 	}
 
 	return(result)
@@ -441,6 +445,7 @@ ranges_latrange <- function(coordMat, plot=FALSE, plot.args=NULL){
 #' @param coordMat 2D numeric matrix with two columns: longitudes and latitudes.
 #' @param dm If there is a pre-made distance matrix, it can be plugged in here.
 #' @param plot Logical, should the result be plotted? Will plot over active plot (as in \code{add=TRUE}).
+#' @param icosa An icosahedral grid to base the spanning tree on. If \code{NULL} then the points original coordinates will be maintained.
 #' @param plot.args List arguments passed to the plotting function: \code{lines}.
 #' @return A list with an estimate and the input for lines to show the MST.
 #' @export
@@ -459,13 +464,25 @@ ranges_latrange <- function(coordMat, plot=FALSE, plot.args=NULL){
 #' # 3. calculate and visualize
 #' mst <- ranges_mstlength(coordMat, plot=TRUE)
 #' # lines(mst$show)
-ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
+ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL, icosa=NULL){
 	if(!requireNamespace("vegan", quietly=TRUE)) stop("This function requires the 'vegan' extension package. ")
 
 	if(is.null(colnames(coordMat))) colnames(coordMat) <- c("long","lat")
 
 	# get rid of redundant entries
 	coordMat <- unique(coordMat)
+
+	# reduce to icosahedral gridpoints
+	if(!is.null(icosa)){
+		# look up the cells
+		cells <- icosa::locate(icosa, coordMat)
+		# look up the centers
+		cents <- icosa::centers(icosa)
+		# unique the cells
+		un <- unique(cells)
+		# the coordinates of the centers
+		coordMat <- cents[un, ]
+	}
 
 	# calculate the distance matrix
 	if(is.null(dm)) dm <- icosa::arcdistmat(coordMat)
@@ -493,20 +510,30 @@ ranges_mstlength <- function(coordMat, dm=NULL, plot=FALSE, plot.args=NULL){
 
 	}
 
-	result <- list(
-		estimate=sum(stre$dist),
-		index=index,
-		show=showThis
-	)
+	if(!is.null(icosa)){
+		result <- list(
+			estimate=sum(stre$dist),
+			centers=coordMat,
+			index=index,
+			show=showThis
+		)
+	}else{
+		result <- list(
+			estimate=sum(stre$dist),
+			index=index,
+			show=showThis
+		)
+	}
 	if(plot){
 		if(is.null(plot.args)) plot.args <- list(col="gray")
 		arguments <- c(list(x=showThis), plot.args)
-		# do.call(icosa::arcs, arguments)
-		do.call(lines, arguments)
+
+		if(!is.null(icosa)) plot(icosa, un, col="#FF000055", add=TRUE, border="white")
+		do.call(icosa::arcs, arguments)
+		# do.call(arcs, arguments)
 	}
 
 	return(result)
-
 }
 
 ################################################################################
